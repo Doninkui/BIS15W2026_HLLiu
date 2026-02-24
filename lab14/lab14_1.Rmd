@@ -48,7 +48,7 @@ Because some of these maps are proprietary, you will need an API key to use them
 
 Start by making an account with [Stadia Maps](https://client.stadiamaps.com/signup/). You need to add a "property" which is just a name for your project. Once you have an account, you can get an API key. Use the following code to register your key.  
 ```{r}
-register_stadiamaps("YOUR API KEY HERE", write = FALSE)
+register_stadiamaps("642bab98-037e-4566-b16b-c8f0b1a62925", write = FALSE)
 ```
 
 ## Load the Data
@@ -95,17 +95,36 @@ If we want to make an interactive map, we can use the `leaflet` package. This al
 
 Get the min/max from the data.
 ```{r}
-
+spiders %>% 
+  summarise(lon_min=min(longitude,na.rm=T),
+            lon_max=max(longitude,na.rm=T),
+            lat_min=min(latitude,na.rm=T),
+            lat_max=max(latitude,na.rm=T))
+  
 ```
 
 Add this to four new variables which will be used to create the bounding box in leaflet.
 ```{r}
-
+lon_min <- -124.13	
+lon_max <--115.49	 
+lat_min <- 34.67	
+lat_max <- 41.8	
 ```
 
 Build the interactive map using Stadia maps.
 ```{r}
-
+leaflet(spiders) %>% 
+  addProviderTiles(providers$Stadia.StamenTerrain) %>% 
+  addCircleMarkers(
+    lng=~longitude,
+    lat=~latitude,
+    radius=2,
+    stroke=FALSE,
+    fillOpacity = 0.7
+  ) %>% 
+  addScaleBar(position="bottomleft") %>% 
+  fitbounds(lng1=lon_min,lat1=lat_min,
+            lng2=lon_max,lat2=lat_max)
 ```
 
 Build the same interactive map using default OpenStreet maps.
@@ -118,17 +137,28 @@ For this practice we will use data on the distribution of grizzly bears in Alask
 
 1. Load the `grizzly` data and evaluate its structure.  
 ```{r message=FALSE, warning=FALSE}
-
+grizzly <- read_csv("data/bear-sightings.csv")%>% 
+  clean_names()
+```
+```{r}
+str(grizzly)
 ```
 
 2. Use the range of the latitude and longitude to build an appropriate bounding box for your map.  
 ```{r}
-
+grizzly %>% 
+  select(latitude,longitude) %>% 
+  summary()
+```
+```{r}
+lat <- c(55.02,70.37)
+long <- c(-131.1,-166.2)
+bbox <- make_bbox(long,lat,f=0.05)
 ```
 
 3. Load a map from `stadiamaps` in a `stamen_terrain` projection and display the map.
 ```{r}
-
+map1 <- get_stadiamap(bbox)
 ```
 
 ```{r}
@@ -137,7 +167,9 @@ For this practice we will use data on the distribution of grizzly bears in Alask
 
 4. Build a final map that overlays the recorded observations of grizzly bears in Alaska.  
 ```{r}
-
+ggmap(map1)+
+  geom_point(data=grizzly,aes(longtitude,latitude),size=0.8)+
+  labs=)
 ```
 
 -->[Home](https://jmledford3115.github.io/datascibiol/)
