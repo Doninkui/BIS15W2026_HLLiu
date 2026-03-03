@@ -103,7 +103,12 @@ gap %>%
   filter(year%in%c(1930,1950)) %>%
   mutate(year=factor(year)) %>% 
   ggplot(aes(x=lex,color=year,fill = year))+
-  geom_density(alpha=0.3)  
+  geom_density(alpha=0.3)+
+  labs(title="Distribution of Life Extectancy, 1930 and 1950 years",
+       x="Life Expectancy curve",
+       y=NULL,
+       color="Year",
+       fill="Year")  
 ```
 
 ## Create Categories with mutate and case_when()
@@ -130,12 +135,20 @@ income_cat2000 <- gap %>%
 ## Practice
 1. How many countries are in each of the World Bank Income Categories as of the year 2000?
 ```{r}
-
+income_cat2000 %>% 
+  count(income_category)
 ```
 
 2. Make a bar plot showing the number of countries in each income category in the year 2000.
 ```{r}
-
+income_cat2000 %>% 
+  count(income_category) %>% 
+  ggplot(aes(x=income_category,y=n,fill=income_category))+
+  geom_col()+
+  labs(title="Countries in WB income Categories",
+       x="Income Category",
+       y=NULL)+
+  theme(legend,position=NULL) #remove the legend
 ```
 
 ## That's it! Let's take a break!  

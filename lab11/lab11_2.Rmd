@@ -209,12 +209,18 @@ homerange %>%
 
 `facet_wrap()` makes a ribbon of panels by a specified categorical variable and allows you to control how you want them arranged.  
 ```{r}
-
+homerange %>% 
+  ggplot(aes(x=taxon, y=log10_mass, fill=thermoregulation))+
+  geom_boxplot()+
+  facet_wrap(~trophic_guild,ncol=2,labeller=label_both)
 ```
 
 `facet_grid()` allows control over the faceted variable; it can be arranged in rows or columns. rows~columns. 
 ```{r}
-
+homerange %>% 
+  ggplot(aes(x=taxon, y=log10_mass, fill=thermoregulation))+
+  geom_boxplot()+
+  facet_wrap(~trophic_guild,ncol=2,labeller=label_both)
 ```
 
 ```{r}

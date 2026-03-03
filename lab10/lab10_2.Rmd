@@ -150,6 +150,7 @@ penguins%>%
 2. Make another bar plot that shows the number of individuals by sex on each island?
 ```{r}
 penguins%>%
+  na.omit %>% #get rid of na
   ggplot(aes(x=island,fill = sex))+
   geom_bar(position = "dodge")
 ```
@@ -160,13 +161,15 @@ In addition to `fill`, `group` is an aesthetic that accomplishes the same functi
 Here is a box plot that shows `log10.mass` by taxonomic `class.`
 ```{r}
 homerange %>% 
-  ggplot(aes(x=class,y=log10_mass))+
-  goem_boxplot()
+  ggplot(aes(x=class,y=log10_mass,group=taxon))+
+  geom_boxplot()
 ```
 
 I use `group` to make individual box plots for each taxon.
 ```{r}
-
+homerange %>% 
+  ggplot(aes(x=class,y=log10_mass,fill=taxon))+
+  geom_boxplot()
 ```
 
 I can also use `fill` to associate the different taxa with a color coded key.
