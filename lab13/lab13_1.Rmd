@@ -19,7 +19,7 @@ output:
 ## Install the package `naniar`
 The [naniar](https://naniar.njtierney.com/) package includes some useful tools to manage NA's.
 ```{r}
-#install.packages("naniar")
+install.packages("naniar")
 ```
 
 ## Load the libraries
@@ -59,7 +59,8 @@ life_history %>%
 
 Here we look for all of the -999's.
 ```{r}
-
+life_history %>% 
+  summarize(across(everything(),~sum(is.na(.==-999))))
 ```
 
 ## Dealing with NA's using `read_csv()`
@@ -72,32 +73,35 @@ life_history_no_nas <-
 
 Rechecking for NA's. Now we see that there are NA's in many of the variables.
 ```{r}
-
+life_history_no_nas %>% 
+  summarize(across(everything(),~sum(is.na(.))))
 ```
 
 ## Did we catch them all?
 Sometimes it can be helpful to do a quick scan using view() or glimpse() to see if there are any other odd values that might represent NA's. Notice that `not measured` is used in `newborn`.
 ```{r}
-
+summary(life_history_no_nas)
 ```
 
 ```{r}
-
+glimpse(life_history_no_nas)
 ```
 
 Notice that `max_life` has no NA's. Does that make sense? How likely is it that we know the lifespan for all of the species in the data set?
 ```{r}
-life_history %>% 
-  filter(max_life=o)
+hist(life_history_no_nas$max_life)
 ```
 
 ```{r}
-
+life_history_no_nas %>% 
+  filter(max_life==0) %>% 
+  select(order,family,genus,species,max_life)
 ```
-
 Let's use `mutate()` and use `na_if()` to replace 0's with NA's in `max_life`. This chunk allows us to address problems in a single variable.
 ```{r}
-
+life_history_no_nas <- 
+  life_history_no_nas %>% 
+  mutate(max_life=na_if(max_life,0))
 ```
 
 ## `naniar`
