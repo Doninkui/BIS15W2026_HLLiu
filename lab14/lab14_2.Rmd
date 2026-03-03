@@ -40,7 +40,7 @@ Shiny apps can be designed to do almost anything you can imagine. They are very 
 ## Built-in Examples
 There are many built-in examples in shiny. You can run them by typing the following into the R console. Examples: "01_hello", "02_text", "03_reactivity", "04_mpg", "05_sliders", "06_tabsets", "07_widgets", "08_html", "09_upload", "10_download", "11_timer"
 ```{r}
-#runExample("04_mpg")
+runExample("04_mpg")
 ```
 
 ## Other Examples
@@ -259,21 +259,22 @@ colnames(homerange)
 library(shiny)
 
 ui <- fluidPage(
-  selectInput("x",
-              "Select Fill Variable",
-              choices=c("trophic_guild",
-                        "thermoregulation"),
-                        selected="trophic_guild"),
+  radioButtons("x",
+               "Select Fill Variable",
+               choices=c("trophic_guild",
+                         "thermoregulation"),
+               selected="trophic_guild"),
   plotOutput("plot")
-)
+               )
 
 server <- function(input, output, session) {
   output$plot <- renderPlot({
     ggplot(data=homerange,
            aes_string(x="locomotion",fill=input$x))+
       geom_bar(position="dodge",alpha=0.8,color="black")+
-      labs(x=NULL,y=NULL,fill="fill Variable")
+      labs(x=NULL,y=NULL,fill="Fill Variable")
   })
+  
 }
 
 shinyApp(ui, server)
