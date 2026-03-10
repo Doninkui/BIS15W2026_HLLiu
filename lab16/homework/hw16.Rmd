@@ -1,6 +1,6 @@
 ---
 title: "Homework YY"
-author: "Your Name Here"
+author: "Hangjun Liu"
 date: "`r Sys.Date()`"
 output:
   html_document:
@@ -21,7 +21,7 @@ Make sure to use the formatting conventions of RMarkdown to make your report nea
 ### Install Biostrings
 ```{r,bquiet=TRUE, message=FALSE, warning=FALSE}
 #if (!requireNamespace("BiocManager", quietly = TRUE))
-#  install.packages("BiocManager")
+  #install.packages("BiocManager")
 
 #BiocManager::install("Biostrings")
 ```
@@ -45,57 +45,75 @@ You will use BLAST, a tool used in real clinical and research microbiology labs,
 
 **1. Read the "gene of interest" sequence from the `goi_01.txt` file into R using the Biostrings package. Store this in an object called `query_seq`.What type sequence is this? (DNA, RNA or Protien) **
 ```{r}
-
+seq_lines <- readLines("data/goi_01.txt")
+```
+#it is a DNA
+```{r}
+query_seq <-paste(seq_lines,collapse="")
 ```
 
 ```{r}
-
+seq_query <- DNAString(query_seq)
 ```
-
 
 **2.Perform a blastx search using `goi_01.txt` as the query and the "core_nt" database. Download the cluster table results in CSV format, change the name to "goi_01_blastx.csv" and store in the homework/data folder. Read the csv file into R and clean the column names. Save the cleaned data frame as goi_01_blastx.**
 ```{r}
-
+goi_01_blastx <- read_csv("data/goi_01_blastx.csv") %>% clean_names()
 ```
 
 ```{r}
-
+glimpse(goi_01_blastx)
 ```
 
 **3.Display the top 10 blastx hits, based on e_value, for this blastx search? (Include the Scientific Name, Cluster Anscestor, Cluster Representative Sequence, Max Score, Query Cover, E value and Percent Identity)**
 ```{r}
-
+top10_hits <- goi_01_blastx %>% 
+  select(representative_sequence,
+         cluster_ancestor,
+         cluster_composition,
+         max_score,
+         query_cover,
+         e_value,per_ident) %>% 
+  arrange(e_value) %>% 
+  head(10)
 ```
  
+```{r}
+top10_hits
+```
 
 **4. create a plot that shows the different in percent identity for each Scientific Name of the top 10 blastx hits. Make sure to label your axes and give your plot a title.**
 ```{r}
-
+top10_hits %>% ggplot(aes(x=cluster_ancestor,y=per_ident))+
+  geom_col(fill="darkblue")+
+  labs(title = "percent identity of top 10 hits")+
+  theme_minimal()
 ```
 
 
 **5 Perform a blastn search using `goi_01.txt` as the query and the "core_nt" database. Download the alignment description in CSV format, change the name to "goi_01_blastn.csv" and store in the homework/data folder. Read the csv file into R and clean the column names. Save the cleaned data frame as goi_01_blastn.**
 ```{r}
-
+goi_01_blastn <- read_csv("data/goi_01_blastn.csv") %>% clean_names()
 ```
 
 ```{r}
-
+glimpse(goi_01_blastn)
 ```
 
 **6. What was the top blastn hit, based on e_value, for this blastn search? (Include the Cluster Ancestor, Cluster, Representative Sequence, Max Score, Query Cover, E value, Percent Identity and Accession Link)**
 ```{r}
-
+ goi_01_blastn %>% 
+  arrange(e_value) %>% head(1)
 ```
 
 **7. Based on the blastx and blastn results, what do you think this gene is and what bacteria do you think it came from?**
-```{}
 
-```
+#it is most likely comes from Yersinia pestis
+
 
 **8. For the top blastn hit, click on the accession link for this bacteria and download the coding sequences as a FASTA Protein file. Read the fasta file into R using the Biostrings package and store it in an object called `goi_blastn_hit`.**
 ```{r}
-
+goi_blastn_hit <- readAAStringSet("data/sequence.fasta")
 ```
 
 ```{r}
@@ -103,15 +121,15 @@ You will use BLAST, a tool used in real clinical and research microbiology labs,
 ```
 
 **9. From the same organism, identify 5 other annotated genes? Do these genes suggest about the biology or virulence of this bacterium?** *Annotated genes can be found in the "CDS" section of the GenBank file. You can also find genes by going to summary page for the organism and looking at the "View annotated genes" section.*
-```{r}
 
-```
+#1.CP177500.1,2. CP177607.1,3. CP177680.1,4.CP177999.1,5. CP177470.1
+
 
 
 **10. Now that you have an idea of this bacteria's identity, what illness/disease do you think the patient has? What is the historical or public health significance of this disease? Based on the gene you identified, what role might this gene play in pathogenicity?**
-```{}
 
-```
+It can be plague,which caused several major pandemics such as black death.it can protect the bacteria from the attacking of immune system.
+
 
 
 ## Knit and Upload
